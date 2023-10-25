@@ -18,13 +18,14 @@ public class MenuService {
 
     public static void mainMenu() {
         String[] mainMenuArr = {"Show Data", "Create Reservation", "Complete/cancel reservation", "Exit"};
-        String[] subMenuArr = {"Recent Reservation", "Show Customer", "Show Available Employee", "Back to main menu"};
+        String[] subMenuArr = {"Recent Reservation", "Show Customer", "Show Available Employee", "Show Reservation History", "Back to main menu"};
     
         int optionMainMenu;
         int optionSubMenu;
 
 		boolean backToMainMenu = false;
         boolean backToSubMenu = false;
+        
         do {
             PrintService.printMenu("Main Menu", mainMenuArr);
             optionMainMenu = Integer.valueOf(input.nextLine());
@@ -36,31 +37,89 @@ public class MenuService {
                         // Sub menu - menu 1
                         switch (optionSubMenu) {
                             case 1:
-                                // panggil fitur tampilkan recent reservation
+                            	PrintService.showRecentReservation(reservationList);
                                 break;
                             case 2:
-                                // panggil fitur tampilkan semua customer
+                                PrintService.showAllCustomer(personList);
                                 break;
                             case 3:
-                                // panggil fitur tampilkan semua employee
+                                PrintService.showAllEmployee(personList);
                                 break;
                             case 4:
-                                // panggil fitur tampilkan history reservation + total keuntungan
+                                PrintService.showHistoryReservation(reservationList);
                                 break;
                             case 0:
-                                backToSubMenu = false;
+                                backToSubMenu = true;
+                                break;
+                            default:
+                            	System.out.println("Menu tidak ditemukan. Masukkan lagi!");
                         }
                     } while (!backToSubMenu);
                     break;
                 case 2:
-                    // panggil fitur menambahkan reservation
+                	reservationList.add(ReservationService.createReservation(personList, serviceList, reservationList));
+                	System.out.println();
                     break;
                 case 3:
-                    // panggil fitur mengubah workstage menjadi finish/cancel
+                	String workStage;
+                	boolean isWorkStageValid = false;
+                	boolean isValid = false;
+                	String reservationId;
+                	int reservationIndex;
+                	
+                	Reservation reservationTemp = new Reservation();
+                	Reservation reservationNew = new Reservation();
+                	
+                	PrintService.showRecentReservation(reservationList);
+                	
+                	do {
+                		System.out.println("Silahkan Masukkan Reservation Id");
+            	    	System.out.print("Rsv-");
+            	    	reservationId = "Rsv-" + input.nextLine();
+            	    	
+            	    	for (Reservation reservation : reservationList) {
+            				if(reservation.getReservationId().equalsIgnoreCase(reservationId)) {
+            					isValid = true;
+            					break;
+            				}
+            			}
+            	    	
+            	    	if(!isValid) {
+            	    		System.out.println("Reservasi tidak ditemukan!");
+            	    	}
+                	}while(!isValid);
+                	
+                	do {
+                		System.out.println("Selesaikan Reservasi (Finish/Cancel)");
+                		workStage = input.nextLine();
+            	    	
+        				if(workStage.equalsIgnoreCase("Finish") || workStage.equalsIgnoreCase("Cancel")) {
+        					isWorkStageValid = true;
+        					break;
+        				}
+            	    	
+            	    	if(!isWorkStageValid) {
+            	    		System.out.println("Workstage tidak valid!");
+            	    	}
+                	}while(!isWorkStageValid);
+                	
+                	reservationTemp = ReservationService.getReservationById(reservationList, reservationId);
+                	reservationIndex = ReservationService.getReservationIndex(reservationList, reservationId);
+                	
+                	reservationNew = reservationTemp;
+                	reservationNew.setWorkstage(workStage);
+                	
+                	reservationList.set(reservationIndex, reservationNew);
+                	
+                	System.out.println("Reservasi selesai dilakukan");
+                	
                     break;
                 case 0:
-                    backToMainMenu = false;
+                	System.out.println("Terima Kasih Telah Menggunakan Aplikasi Ini!");
+                    backToMainMenu = true;
                     break;
+                default:
+                	System.out.println("Menu tidak ditemukan! Masukkan lagi");
             }
         } while (!backToMainMenu);
 		

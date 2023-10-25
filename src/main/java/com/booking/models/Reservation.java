@@ -1,6 +1,9 @@
 package com.booking.models;
 
 import java.util.List;
+
+import com.booking.interfaces.IReservationPrice;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Reservation {
+public class Reservation implements IReservationPrice{
     private String reservationId;
     private Customer customer;
     private Employee employee;
@@ -29,9 +32,17 @@ public class Reservation {
         this.services = services;
         this.reservationPrice = calculateReservationPrice();
         this.workstage = workstage;
-    };
-
-    private double calculateReservationPrice(){
-        return 0;
     }
+
+	@Override
+	public double calculateReservationPrice() {
+		// TODO Auto-generated method stub
+		double price = 0;
+		
+		for (Service service : services) {
+			price += service.getPrice() * discount.get(customer.getMember().getMembershipName()); 
+		}
+		
+		return price;
+	};
 }
