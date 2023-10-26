@@ -24,19 +24,17 @@ public class ValidationService {
         	System.out.println("Silahkan masukkan Customer ID : ");
         	System.out.print("Cust-");
         	customerId = "Cust-" + input.nextLine();
+        	final String customerTemp = customerId;
         	
-        	for (Person customer : customerList) {
-    			if(customer instanceof Customer) {
-    				if(customerId.equalsIgnoreCase(customer.getId())) {
-    					isCustomerValid = true;
-    					break;
-    				} 
-    			}
-    		}
+        	isCustomerValid = customerList.stream()
+        						.filter(person -> person instanceof Customer)
+        						.map(customer -> (Customer) customer)
+        						.anyMatch(customer -> customer.getId().equalsIgnoreCase(customerTemp));
         	
         	if(!isCustomerValid) {
         		System.out.println("Customer yang dicari tidak ditemukan.");
         	}
+        	
         }while(!isCustomerValid);
     	
     	return customerId;
@@ -50,7 +48,9 @@ public class ValidationService {
     		System.out.println("Silahkan masukkan Employee ID : ");
     		System.out.print("Emp-");
         	employeeId = "Emp-" + input.nextLine();
+        	final String employeeTemp = employeeId;
         	
+        	/*
 	    	for (Person employee : employeeList) {
 				if(employee instanceof Employee) {
 					if(employeeId.equalsIgnoreCase(employee.getId())) {
@@ -59,6 +59,11 @@ public class ValidationService {
 					} 
 				}
 			}
+			*/
+        	isEmployeeValid = employeeList.stream()
+								.filter(person -> person instanceof Employee)
+								.map(employee -> (Employee) employee)
+								.anyMatch(employee -> employee.getId().equalsIgnoreCase(employeeTemp));
 	    	
 	    	if(!isEmployeeValid) {
 	    		System.out.println("Employee yang dicari tidak ditemukan.");
@@ -71,12 +76,17 @@ public class ValidationService {
     public static boolean validateServiceId(List<Service> serviceList, String serviceId){
         boolean isServiceValid = false;
     	
+        /*
     	for (Service service : serviceList) {
 			if(serviceId.equalsIgnoreCase(service.getServiceId())) {
 				isServiceValid = true;
 				break;
 			} 
 		}
+		*/
+        
+        isServiceValid = serviceList.stream()
+							.anyMatch(service -> service.getServiceId().equalsIgnoreCase(serviceId));
     	
     	if(!isServiceValid) {
     		System.out.println("Service yang dicari tidak ditemukan.");
@@ -86,18 +96,24 @@ public class ValidationService {
     }
     
     public static boolean validateUniqueServiceId(List<String> servicesId, String serviceId) {
-    	boolean isUnique = true;
+    	boolean isNotUnique = false;
     	
+    	/*
     	for(String id : servicesId) {
     		if(serviceId.equalsIgnoreCase(id)) {
     			isUnique = false;
     		}
     	}
+    	*/
     	
-    	if(!isUnique) {
+    	isNotUnique = servicesId.stream()
+				.anyMatch(service -> service.equalsIgnoreCase(serviceId));
+    	
+    	if(isNotUnique) {
     		System.out.println("Service sudah dipilih");
-    	}
+    	} 
     	
-    	return isUnique;
+    	
+    	return isNotUnique;
     }
 }

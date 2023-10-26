@@ -20,7 +20,7 @@ public class ReservationService {
         String addService;
         
     	boolean isServiceValid = false;
-    	boolean isUnique = false;
+    	boolean isNotUnique = true;
     	boolean isServiceIdDone = false;
 
     	String reservationId = "Rsv-" + String.format("%02d", reservationList.size() + 1);
@@ -45,11 +45,11 @@ public class ReservationService {
             	
             	isServiceValid = ValidationService.validateServiceId(serviceList, serviceIdTemp);
             	if(serviceId.isEmpty()) {
-            		isUnique = true;
+            		isNotUnique = false;
             	} else {
-            		isUnique = ValidationService.validateUniqueServiceId(serviceId, serviceIdTemp);
+            		isNotUnique = ValidationService.validateUniqueServiceId(serviceId, serviceIdTemp);
             	}
-    		}while(!isServiceValid || !isUnique);
+    		}while(!isServiceValid || isNotUnique);
     		                    	
     		serviceId.add(serviceIdTemp);
     		System.out.println("Tambahkan service lain? (ya/tidak)");
@@ -75,56 +75,67 @@ public class ReservationService {
     }
 
     public static Customer getCustomerByCustomerId(List<Person> personList, String customerId){
-    	Customer customer = new Customer();
-        
-    	for (Person person : personList) {
-			if(person instanceof Customer) {
-				if(person.getId().equalsIgnoreCase(customerId)) {
-					customer = (Customer) person;
-				}
-			}
-		}
     	
-        return customer;
+    	return personList.stream()
+    			.filter(person -> person instanceof Customer)
+    			.map(customer -> (Customer) customer)
+    			.filter(customer -> customer.getId().equalsIgnoreCase(customerId))
+    			.findFirst()
+    			.orElse(null);
     }
     
+    /* Contoh stream()
+     * 
+     * public static List<CommercialBook> getBookByCountryAuthorV3(List<CommercialBook> allBook, String country){
+		List<CommercialBook> bookByCountry = new ArrayList<CommercialBook>();
+		
+		allBook.stream()
+		.filter(data -> data.getAuthor().getCountry().equalsIgnoreCase(country))
+		.forEach((data) -> {
+			bookByCountry.add(data);
+		});
+		
+		return bookByCountry;
+	}
+	
+	public static List<CommercialBook> getComicByRatingMangakaV2(List<CommercialBook> listAllBook, RatingAuthorEnum rating, List<CommercialBook> listComic) {
+
+		listAllBook
+	        .stream()
+	        .filter(item -> item instanceof Comic)
+	        .map(commercialBook -> (Comic) commercialBook)
+	        .filter(bookComic -> bookComic.getAuthor().getRating() == rating)
+	        .forEach(data -> {// Data Object Comic berdasarkan Rating
+	        	listComic.add(data);
+	        });
+		
+        return list
+     */
+    
     public static Employee getEmployeeByEmployeeId(List<Person> personList, String employeeId){
-    	Employee customer = new Employee();
-        
-    	for (Person person : personList) {
-			if(person instanceof Employee) {
-				if(person.getId().equalsIgnoreCase(employeeId)) {
-					customer = (Employee) person;
-				}
-			}
-		}
     	
-        return customer;
+    	return personList.stream()
+    			.filter(person -> person instanceof Employee)
+    			.map(employee -> (Employee) employee)
+    			.filter(employee -> employee.getId().equalsIgnoreCase(employeeId))
+    			.findFirst()
+    			.orElse(null);
     }
     
     public static Service getServiceById(List<Service> serviceList, String serviceId) {
-    	Service service = new Service();
     	
-    	for(Service s : serviceList) {
-    		if(s.getServiceId().equalsIgnoreCase(serviceId)) {
-    			service = s;
-    		}
-    	}
-    	
-		return service;
+    	return serviceList.stream()
+    			.filter(service -> service.getServiceId().equalsIgnoreCase(serviceId))
+    			.findFirst()
+    			.orElse(null);
     }
     
     public static Reservation getReservationById(List<Reservation> reservationList, String reservationId) {
-    	Reservation reservationTemp = new Reservation();
     	
-    	for (Reservation reservation : reservationList) {
-			if(reservation.getReservationId().equalsIgnoreCase(reservationId)) {
-				reservationTemp = reservation;
-				break;
-			}
-		}
-    	
-    	return reservationTemp;
+    	return reservationList.stream()
+    			.filter(service -> service.getReservationId().equalsIgnoreCase(reservationId))
+    			.findFirst()
+    			.orElse(null);
     }
     
     public static int getReservationIndex(List<Reservation> reservationList, String reservationId) {

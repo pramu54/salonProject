@@ -61,58 +61,61 @@ public class MenuService {
                 	System.out.println();
                     break;
                 case 3:
-                	String workStage;
-                	boolean isWorkStageValid = false;
-                	boolean isValid = false;
-                	String reservationId;
-                	int reservationIndex;
-                	
-                	Reservation reservationTemp = new Reservation();
-                	Reservation reservationNew = new Reservation();
-                	
-                	PrintService.showRecentReservation(reservationList);
-                	
-                	do {
-                		System.out.println("Silahkan Masukkan Reservation Id");
-            	    	System.out.print("Rsv-");
-            	    	reservationId = "Rsv-" + input.nextLine();
-            	    	
-            	    	for (Reservation reservation : reservationList) {
-            				if(reservation.getReservationId().equalsIgnoreCase(reservationId)) {
-            					isValid = true;
+                	if(reservationList.isEmpty()) {
+                		System.out.println("Reservasi Kosong!");
+                	} else {
+                		String workStage;
+                    	boolean isWorkStageValid = false;
+                    	boolean isValid = false;
+                    	String reservationId;
+                    	int reservationIndex;
+                    	
+                    	Reservation reservationTemp = new Reservation();
+                    	Reservation reservationNew = new Reservation();
+                    	
+                    	PrintService.showRecentReservation(reservationList);
+                    	
+                    	do {
+                    		System.out.println("Silahkan Masukkan Reservation Id");
+                	    	System.out.print("Rsv-");
+                	    	reservationId = "Rsv-" + input.nextLine();
+                	    	
+                	    	for (Reservation reservation : reservationList) {
+                				if(reservation.getReservationId().equalsIgnoreCase(reservationId)) {
+                					isValid = true;
+                					break;
+                				}
+                			}
+                	    	
+                	    	if(!isValid) {
+                	    		System.out.println("Reservasi tidak ditemukan!");
+                	    	}
+                    	}while(!isValid);
+                    	
+                    	do {
+                    		System.out.println("Selesaikan Reservasi (Finish/Cancel)");
+                    		workStage = input.nextLine();
+                	    	
+            				if(workStage.equalsIgnoreCase("Finish") || workStage.equalsIgnoreCase("Cancel")) {
+            					isWorkStageValid = true;
             					break;
             				}
-            			}
-            	    	
-            	    	if(!isValid) {
-            	    		System.out.println("Reservasi tidak ditemukan!");
-            	    	}
-                	}while(!isValid);
-                	
-                	do {
-                		System.out.println("Selesaikan Reservasi (Finish/Cancel)");
-                		workStage = input.nextLine();
-            	    	
-        				if(workStage.equalsIgnoreCase("Finish") || workStage.equalsIgnoreCase("Cancel")) {
-        					isWorkStageValid = true;
-        					break;
-        				}
-            	    	
-            	    	if(!isWorkStageValid) {
-            	    		System.out.println("Workstage tidak valid!");
-            	    	}
-                	}while(!isWorkStageValid);
-                	
-                	reservationTemp = ReservationService.getReservationById(reservationList, reservationId);
-                	reservationIndex = ReservationService.getReservationIndex(reservationList, reservationId);
-                	
-                	reservationNew = reservationTemp;
-                	reservationNew.setWorkstage(workStage);
-                	
-                	reservationList.set(reservationIndex, reservationNew);
-                	
-                	System.out.println("Reservasi selesai dilakukan");
-                	
+                	    	
+                	    	if(!isWorkStageValid) {
+                	    		System.out.println("Workstage tidak valid!");
+                	    	}
+                    	}while(!isWorkStageValid);
+                    	
+                    	reservationTemp = ReservationService.getReservationById(reservationList, reservationId);
+                    	reservationIndex = ReservationService.getReservationIndex(reservationList, reservationId);
+                    	
+                    	reservationNew = reservationTemp;
+                    	reservationNew.setWorkstage(workStage);
+                    	
+                    	reservationList.set(reservationIndex, reservationNew);
+                    	
+                    	System.out.println("Reservasi selesai dilakukan");
+                	}
                     break;
                 case 0:
                 	System.out.println("Terima Kasih Telah Menggunakan Aplikasi Ini!");
